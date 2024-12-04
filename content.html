@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mineral Detector in Plants - Login, Upload, and Navigation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            background-image: url('greenfarm.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        .form-container {
+            width: 300px;
+            padding: 90px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: white;
+            position: relative;
+            text-align: center;
+        }
+        label, input, select, button {
+            display: block;
+            margin: 10px auto;
+            width: 100%;
+            max-width: 200px;
+        }
+        input, select, button {
+            padding: 15px;
+        }
+        .times-new-roman {
+            font-family: 'Times New Roman', Times, serif;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-transform: uppercase;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #imagePreviewContainer {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        #imagePreview {
+            max-width: 100%;
+            max-height: 200px;
+            margin: 10px auto;
+            border: 2px solid #4CAF50;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        #languageSelect {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: auto;
+        }
+        h2 {
+            text-align: center;
+            text-transform: uppercase;
+        }
+        #mineralDetectorTitle {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #131413;
+            font-family: 'Times New Roman', Times, serif;
+            text-transform: uppercase;
+        }
+        #imageFile {
+            display: none;
+        }
+        #selectFileButton {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ccc;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            display: inline-block;
+            margin: 10px auto;
+        }
+        #imageUploadForm, #processingMessage {
+            display: none;
+        }
+        #loadingSpinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="mineralDetectorTitle">MINERAL DETECTOR IN PLANTS</div>
+    <div class="form-container">
+        <select id="languageSelect" onchange="changeLanguage()">
+            <option value="en">English</option>
+            <option value="ta">Tamil</option>
+            <option value="hi">Hindi</option>
+        </select>
+
+        <form id="loginForm">
+            <h2 id="loginHeader">LOGIN</h2>
+            <label for="username" class="times-new-roman">
+                <p id="usernameLabel">USERNAME</p>
+            </label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password" class="times-new-roman">
+                <p id="passwordLabel">PASSWORD</p>
+            </label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit" id="submitButton">SUBMIT</button>
+        </form>
+
+        <form id="imageUploadForm">
+            <h2 id="uploadHeader">UPLOAD IMAGE</h2>
+            <label for="imageFile" id="selectFileButton" class="times-new-roman">
+                <span id="imageFileLabel">SELECT FILE</span>
+            </label>
+            <input type="file" id="imageFile" name="imageFile" accept="image/*" required onchange="previewImage()">
+            <span id="chosenFileName">No file chosen</span>
+
+            <div id="imagePreviewContainer">
+                <p id="previewLabel">IMAGE PREVIEW</p>
+                <img id="imagePreview" src="/api/placeholder/300/200" alt="Image preview">
+            </div>
+
+            <button type="submit" id="uploadButton">UPLOAD</button>
+        </form>
+
+        <div id="processingMessage">
+            <h2 id="processingHeader">PROCESSING IMAGE</h2>
+            <div id="loadingSpinner"></div>
+            <p id="processingText">Please wait while we analyze your image...</p>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                login: "LOGIN",
+                username: "USERNAME",
+                password: "PASSWORD",
+                submit: "SUBMIT",
+                imageUpload: "UPLOAD IMAGE",
+                selectImage: "SELECT FILE",
+                upload: "UPLOAD",
+                preview: "IMAGE PREVIEW",
+                mineralDetector: "MINERAL DETECTOR IN PLANTS",
+                noFileChosen: "No file chosen",
+                processing: "PROCESSING IMAGE",
+                processingText: "Please wait while we analyze your image..."
+            },
+            ta: {
+                login: "உள்நுழைய",
+                username: "பயனர்பெயர்",
+                password: "கடவுச்சொல்",
+                submit: "சமர்ப்பிக்கவும்",
+                imageUpload: "படத்தை பதிவேற்றவும்",
+                selectImage: "கோப்பைத் தேர்ந்தெடுக்கவும்",
+                upload: "பதிவேற்றவும்",
+                preview: "பட முன்னோட்டம்",
+                mineralDetector: "தாவரங்களில் கனிம கண்டறிதல்",
+                noFileChosen: "கோப்பு தேர்ந்தெடுக்கப்படவில்லை",
+                processing: "படம் செயலாக்கப்படுகிறது",
+                processingText: "உங்கள் படத்தை ஆராயும் வரை காத்திருக்கவும்..."
+            },
+            hi: {
+                login: "लॉग इन करें",
+                username: "उपयोगकर्ता नाम",
+                password: "पासवर्ड",
+                submit: "जमा करें",
+                imageUpload: "छवि अपलोड करें",
+                selectImage: "फ़ाइल चुनें",
+                upload: "अपलोड करें",
+                preview: "छवि पूर्वावलोकन",
+                mineralDetector: "पौधों में खनिज डिटेक्टर",
+                noFileChosen: "कोई फ़ाइल नहीं चुनी गई",
+                processing: "छवि संसाधित हो रही है",
+                processingText: "कृपया प्रतीक्षा करें जब तक हम आपकी छवि का विश्लेषण करते हैं..."
+            }
+        };
+
+        function changeLanguage() {
+            const lang = document.getElementById('languageSelect').value;
+            document.getElementById('loginHeader').innerText = translations[lang].login;
+            document.getElementById('usernameLabel').innerText = translations[lang].username;
+            document.getElementById('passwordLabel').innerText = translations[lang].password;
+            document.getElementById('submitButton').innerText = translations[lang].submit;
+            document.getElementById('uploadHeader').innerText = translations[lang].imageUpload;
+            document.getElementById('imageFileLabel').innerText = translations[lang].selectImage;
+            document.getElementById('uploadButton').innerText = translations[lang].upload;
+            document.getElementById('previewLabel').innerText = translations[lang].preview;
+            document.getElementById('mineralDetectorTitle').innerText = translations[lang].mineralDetector;
+            document.getElementById('chosenFileName').innerText = translations[lang].noFileChosen;
+            document.getElementById('processingHeader').innerText = translations[lang].processing;
+            document.getElementById('processingText').innerText = translations[lang].processingText;
+        }
+
+        function previewImage() {
+            const file = document.getElementById('imageFile').files[0];
+            const preview = document.getElementById('imagePreview');
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            const chosenFileName = document.getElementById('chosenFileName');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+                chosenFileName.innerText = file.name;
+            } else {
+                preview.src = '/api/placeholder/300/200';
+                previewContainer.style.display = 'none';
+                chosenFileName.innerText = translations[document.getElementById('languageSelect').value].noFileChosen;
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Here you would typically validate the login credentials
+            // For this example, we'll just show the image upload form
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('imageUploadForm').style.display = 'block';
+        });
+
+        document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Hide the upload form and show processing message
+            document.getElementById('imageUploadForm').style.display = 'none';
+            document.getElementById('processingMessage').style.display = 'block';
+            
+            // Simulate image processing and navigation
+            setTimeout(function() {
+                // In a real application, you would send the image to a server for processing
+                // and receive a response before navigating
+                window.location.href = 'lp.html';
+            }, 3000); // Simulate 3 seconds of processing time
+        });
+
+        changeLanguage(); // Initialize with default language
+    </script>
+</body>
+</html>
